@@ -50,7 +50,7 @@ z_cg = 4/5*z/2;
 % Inertia matrix panel A in s/c frame (Huygens-Steiner theorem)
 Ix_hsA = Ix_spA + mass_sp * (z_cg)^2;
 Iy_hsA = Iy_spA + mass_sp * ((z_cg)^2+(x/2+z/2)^2);
-Iz_hsA = Iz_spA + mass_sp * ((x/2+z/2)^2)^2;
+Iz_hsA = Iz_spA + mass_sp * (x/2+z/2)^2;
 % Inertia matrix panel B in panel frame
 Ix_spB = mass_sp / 12*((y_spB^2+z_sp^2));
 Iy_spB = mass_sp / 12*((x_spB^2+z_sp^2));
@@ -58,7 +58,7 @@ Iz_spB = mass_sp / 12*((y_spB^2+x_spB^2));
 % Inertia matrix panel B in s/c frame (Huygens-Steiner theorem)
 Ix_hsB = Ix_spB + mass_sp * ((z_cg)^2+(x/2+z/2)^2);
 Iy_hsB = Iy_spB + mass_sp * (z_cg)^2;
-Iz_hsB = Iz_spB + mass_sp * ((x/2+z/2)^2)^2;
+Iz_hsB = Iz_spB + mass_sp * (x/2+z/2)^2;
 % Total inertia in body frame 
 Ix = Ix_hs_mb + 2*Ix_hsA + 2*Ix_hsB; 
 Iy = Iy_hs_mb + 2*Iy_hsA + 2*Ix_hsB;
