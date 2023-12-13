@@ -26,30 +26,39 @@ T = 2*pi/n;  % orbit period  [s]
 
 %%%%%%%%%%%%%%%%%%%%%% Spacecraft Characteristics %%%%%%%%%%%%%%%%%%%%%%
 
-MB = [4; 0.1; 0.1; 0.3];% Main body  [kg; m; m; m] Mass, a, b, h
-SP = [1; 0.3; 0.1; 0.01];% Solar panels  [kg; m; m; m] Mass, a, b, h
-% Inertia Moments main body
-Ix_mb = MB(1)/12 * (MB(3)^2 + MB(2)^2); %  [Kg*m^2]
-Iy_mb = MB(1)/12 * (MB(3)^2 + MB(4)^2); %  [Kg*m^2]
-Iz_mb = MB(1)/12 * (MB(2)^2 + MB(4)^2); %  [Kg*m^2]
-
-% Inertia Moments solar panels
-Ix_sp = (2*SP(1))/12 * (SP(3)^2 + SP(2)^2); %  [Kg*m^2]
-Iy_sp = (2*SP(1))/12 * (SP(3)^2 + SP(4)^2); %  [Kg*m^2]
-Iz_sp = (2*SP(1))/12 * (SP(2)^2 + SP(4)^2); %  [Kg*m^2]
-
-% Terms for huygens steiner theorem
-Ix_hs = Ix_sp + 2*SP(1)*(2.5)^2; %  [Kg*m^2]
-Iy_hs = Iy_sp; % distance = 0  [Kg*m^2]
-Iz_hs = Iz_sp + 2*SP(1)*(2.5)^2; %  [Kg*m^2]
-
-% total inertia moments
-Ix = 57749.855*10^-6;
-Iy = 41435.420*10^-6;
-Iz = 24624.309*10^-6;
-
-Inertia_matrix = [Ix 0 0; 0 Iy 0; 0 0 Iz];  % inertia matrix  [Kg*m^2]
-Inverse_inertia = inv(Inertia_matrix);  % inverse inertia matrix  [Kg*m^2]        
+x = 0.1; y = 0.1; z = 0.3; % [m]
+mass = 4; % [kg]
+% Inertia body 
+Ix_mb = mass / 12*((y^2+z^2)); % [kg*m^2]
+Iy_mb = mass / 12*((x^2+z^2));
+Iz_mb = mass / 12*((y^2+x^2));
+% Define solar panel type A and B
+x_spA = 0.3; x_spB = 0.1; % [m]
+y_spA = 0.1; y_spB = 0.3; % [m]
+z_sp = 0.002; % [m]
+mass_sp = 0.25; % [kg]
+% Inertia matrix panel A in panel frame
+Ix_spA = mass_sp / 12*((y_spA^2+z_sp^2));
+Iy_spA = mass_sp / 12*((x_spA^2+z_sp^2));
+Iz_spA = mass_sp / 12*((y_spA^2+x_spA^2));
+% Inertia matrix panel A in body frame (Huygens-Steiner theorem)
+Ix_hsA = Ix_spA + mass_sp * (z/2)^2;
+Iy_hsA = Iy_spA + mass_sp * ((z/2)^2+(x/2+z/2)^2);
+Iz_hsA = Iz_spA + mass_sp * ((x/2+z/2)^2)^2;
+% Inertia matrix panel B in panel frame
+Ix_spB = mass_sp / 12*((y_spB^2+z_sp^2));
+Iy_spB = mass_sp / 12*((x_spB^2+z_sp^2));
+Iz_spB = mass_sp / 12*((y_spB^2+x_spB^2));
+% Inertia matrix panel B in body frame (Huygens-Steiner theorem)
+Ix_hsB = Ix_spB + mass_sp * ((z/2)^2+(x/2+z/2)^2);
+Iy_hsB = Iy_spB + mass_sp * (z/2)^2;
+Iz_hsB = Iz_spB + mass_sp * ((x/2+z/2)^2)^2;
+% Total inertia in body frame 
+Ix = Ix_mb + 2*Ix_hsA + 2*Ix_hsB; 
+Iy = Iy_mb + 2*Iy_hsA + 2*Ix_hsB;
+Iz = Iz_mb + 2*Iz_hsA + 2*Ix_hsB;
+I_tot = [Ix 0 0; 0 Iy 0; 0 0 Iz];
+invI_tot = inv(I_tot);     
 
 %%%%%%%%%%%%%%%%%%%%%% Initial Conditions %%%%%%%%%%%%%%%%%%%%%%
 
