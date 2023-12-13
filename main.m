@@ -61,8 +61,8 @@ Iy_hsB = Iy_spB + mass_sp * (z_cg)^2;
 Iz_hsB = Iz_spB + mass_sp * (x/2+z/2)^2;
 % Total inertia in body frame 
 Ix = Ix_hs_mb + 2*Ix_hsA + 2*Ix_hsB; 
-Iy = Iy_hs_mb + 2*Iy_hsA + 2*Ix_hsB;
-Iz = Iz_hs_mb + 2*Iz_hsA + 2*Ix_hsB;
+Iy = Iy_hs_mb + 2*Iy_hsA + 2*Iy_hsB;
+Iz = Iz_hs_mb + 2*Iz_hsA + 2*Iz_hsB;
 I_tot = [Ix 0 0; 0 Iy 0; 0 0 Iz];
 invI_tot = inv(I_tot);     
 
