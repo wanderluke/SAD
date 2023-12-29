@@ -18,7 +18,7 @@ c = 2.99792*10^8;  % Light velocity  [m/s]
 
 R_e = 6378;  % Earth's radius  [km]
 a = 6939.063;  % Semi-major axis  [km]             
-e = 0.001304;  % Eccentricity  [-]             
+e = 0;  % Eccentricity  [-]             
 i = deg2rad(97.5307);  % Inclination  [rad]           
 theta0 = deg2rad(30);  % true anomaly initial condition  [rad] 
 n = sqrt(mu/a^3);  % mean angular velocity  [rad/s]         
@@ -102,13 +102,15 @@ q0 = [0 0 0 1]'; % quaternions initial condition
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Environment %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Gravity Gradient
-inertia1 = Iz-Iy;  % term to compute gravity gradient  [Kg*m^2]
-inertia2 = Ix-Iz;  % term to compute gravity gradient  [Kg*m^2]
-inertia3 = Iy-Ix;  % term to compute gravity gradient  [Kg*m^2]
-
 % Magnetic Dsiturbance
-m = [0.1; 0.1; 0.1];
+% Roba necessaria per il Subsystem "Mag field senza Matlab fcn"
+% n_E = 729.2e-07; % [rad/s]
+% g1_0 = -29404.8 *1e-9;
+% g1_1 = -1450.9 *1e-9;
+% h1_1 = 4652.5 *1e-9;
+% H_0 = ((g1_0^2)+(g1_1^2)+(h1_1^2))^0.5;
+
+m = [0.1; 0.1; 0.1]; % [A*m^2] Residual  magnetic  induction  due  to  currents  in  the  satellite
 [gn, gm, gvali, gsvi] = textread('igrfSg.txt','%f %f %f %f');
 [hn, hm, hvali, hsvi] = textread('igrfSh.txt','%f %f %f %f');
 G = [gn, gm, gvali, gsvi];
