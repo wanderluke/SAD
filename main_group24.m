@@ -5,7 +5,7 @@ addpath('.\data')
 %addpath('.\scripts\')
 %addpath('functions\')
 
-stepsize = 0.01; % set lower value for a more refined smulation
+stepsize = 0.1; % set lower value for a more refined smulation
 
 % DATA
 
@@ -25,6 +25,9 @@ n = sqrt(mu/a^3);  % mean angular velocity  [rad/s]
 T = 2*pi/n;  % orbit period  [s]   
 
 %%%%%%%%%%%%%%%%%%%%%% Spacecraft Characteristics %%%%%%%%%%%%%%%%%%%%%%
+
+MB = [4; 0.1; 0.1; 0.3];% Main body  [kg; m; m; m] Mass, a, b, h
+SP = [0.25; 0.1; 0.3; 0.01];% Solar panels  [kg; m; m; m] Mass, a, b, h     % (( ?? )) %  <--------  h = spessore?? serve?
 
 x = 0.1; y = 0.1; z = 0.3; % Main body size [m]
 mass = 4; % Main body mass  [kg]
@@ -66,6 +69,27 @@ Iz = Iz_hs_mb + 2*Iz_hsA + 2*Iz_hsB;
 I_tot = [Ix 0 0; 0 Iy 0; 0 0 Iz];
 invI_tot = inv(I_tot);     
 
+%%%%%%%%%%%%%%%%%%%%%%% Sensors characteristics %%%%%%%%%%%%%%%%%%%%%%%
+
+% Earth Horizon Sensor STD16
+EHSampleRate = 1;  % Earth Horizon sensor sample rate  [Hz]  
+EHAccuracy = 0.1020;  % Earth Horizon sensor accuracy HSNS  [deg]
+
+% Gyroscope STIM300
+GyroSampleRate = 10;  % Gyroscope sample rate  [Hz] 
+ARW = 0.15;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
+RRW = 0.3;  % Rate Randon Walk gyroscope  [deg/h]
+
+% Magnetometer DTFM100S
+MMAccuracy = 0.003;  % +-0.3%
+MMSampleRate = 1;  % Magnetometer sample rate  [Hz] to speed up the simulation
+MMnoise = 15e-9*[1; 1; 1];  % noise vector (bias)  [T]
+
+% Extended State Observer
+Lw = 0.8;
+Ld = 1e-5;
+
+
 %%%%%%%%%%%%%%%%%%%%%% Initial Conditions %%%%%%%%%%%%%%%%%%%%%%
 
 wx0 = deg2rad(3);  %omega x  [rad/s]        
@@ -73,6 +97,8 @@ wy0 = deg2rad(11);  %omega y  [rad/s]
 wz0 = deg2rad(14);  %omega z  [rad/s]                        
 w0 = [wx0; wy0; wz0];  %omega vector  [rad/s] [3x1] 
 A_BN0 = eye(3);
+A0 = eye(3);
+q0 = [0 0 0 1]'; % quaternions initial condition
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Environment %%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -96,3 +122,19 @@ rho_d_SP = 0.1;
 
 
 stopTime = T;
+
+
+
+
+%% Variable Thrusters
+bz = 0.1;                                                                   % braccio forze lungo asse z [m]
+by = 0.1;                                                                   % braccio forze lungo asse y [m]
+
+thrust.R = [bz -bz 0   0   0   0                                            % R matrix [3x6]
+             0  0  bz -bz  0   0
+             0  0  0   0  by -by];
+thrust.R_pinv = pinv(thrust.R);                                             % pseudo invers R matrix
+thrust.T_min = 10e-6;                                                     % minimum Thrust [N]
+thrust.T_max = 500e-6;                                                    % maximum Thrust [N]
+thrust.w = sum(null(thrust.R,'r'),2);                                       % non lo so 
+
