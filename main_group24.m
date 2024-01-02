@@ -140,3 +140,7 @@ thrust.T_min = 10e-6;                                                     % mini
 thrust.T_max = 500e-6;                                                    % maximum Thrust [N]
 thrust.w = sum(null(thrust.R,'r'),2);                                       % non lo so 
 
+%% Pointing control
+
+k1 = 0.01;
+k2 = 0.01;
