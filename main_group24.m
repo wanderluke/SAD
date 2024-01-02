@@ -1,6 +1,38 @@
 clear
 clc
 
+%                                        /\   
+%                                        |   z         
+%                                        |                         
+%                                    ________    
+%                                   /        /  
+%                                  /        / 
+%                                 /        /                
+%                                /        /      
+%                               /        /
+%                              /        /
+%                             /        / 
+%     +--------------------- +--------+ ---------------------+
+%    /                      /|       / |                    /        y
+%   /                      / |      /  |                   /   --------> 
+%  +--------------------- +--------+ --|------------------+  
+%                        /|  |    /|   |
+%                       / |  |   / |   |
+%                      /  |  |  /  |   |
+%                     /   |  | /   |   |
+%                    /    |  |/    |   |
+%                   /     |  /     |   |
+%                  /________/+-----|---+
+%                         | /      |  /
+%                         |/       | /
+%                         +--------+
+%                             /
+%                            /  x
+%                           \/
+%
+
+
+
 addpath('.\data')
 %addpath('.\scripts\')
 %addpath('functions\')
@@ -27,7 +59,7 @@ T = 2*pi/n;  % orbit period  [s]
 %%%%%%%%%%%%%%%%%%%%%% Spacecraft Characteristics %%%%%%%%%%%%%%%%%%%%%%
 
 MB = [4; 0.1; 0.1; 0.3];% Main body  [kg; m; m; m] Mass, a, b, h
-SP = [0.25; 0.1; 0.3; 0.01];% Solar panels  [kg; m; m; m] Mass, a, b, h     % (( ?? )) %  <--------  h = spessore?? serve?
+SP = [0.25; 0.1; 0.3; 0.01];% Solar panels  [kg; m; m; m] Mass, a, b, h  
 
 x = 0.1; y = 0.1; z = 0.3; % Main body size [m]
 mass = 4; % Main body mass  [kg]
@@ -67,7 +99,32 @@ Ix = Ix_hs_mb + 2*Ix_hsA + 2*Ix_hsB;
 Iy = Iy_hs_mb + 2*Iy_hsA + 2*Iy_hsB;
 Iz = Iz_hs_mb + 2*Iz_hsA + 2*Iz_hsB;
 I_tot = [Ix 0 0; 0 Iy 0; 0 0 Iz];
-invI_tot = inv(I_tot);     
+invI_tot = inv(I_tot);   
+
+%%%%%%%%%%%%%%%%%%%%%%% Surface of the main body %%%%%%%%%%%%%%%%%%%%%%% 
+s1.n = [1; 0; 0];
+s1.A = z*y;
+s1.r = [x/2; 0; 0];
+s2.n = [0; 1; 0];
+s2.A = x*z;
+s2.r = [0; y/2; 0];
+s3.n = [0; 0; 1];
+s3.A = x*y;
+s3.r = [0; 0; 4/5*z/2]; 
+s4.n = [-1; 0; 0];
+s4.A = z*y;
+s4.r = [-x/2; 0; 0];
+s5.n = [0; -1; 0];
+s5.A = x*z;
+s5.r = [0; -y/2; 0];
+s6.n = [0; 0; -1];
+s6.A = x*y;
+s6.r = [0; 0; -6/5*z/2];
+
+pan.n1 = [0; 0; 1];
+pan.n2 = [0; 0; -1];
+pan.A = x_spA*y_spA;
+pan.r = [0; 0; 4/5*z/2];
 
 %%%%%%%%%%%%%%%%%%%%%%% Sensors characteristics %%%%%%%%%%%%%%%%%%%%%%%
 
@@ -117,7 +174,18 @@ rho_d_MB = 0.1;
 rho_s_MB = 0.5;
 rho_s_SP = 0.1;
 rho_d_SP = 0.1;
+% Dati per il SRP di Luke
+Fe = 1358; % [W/m^2] Power per unit surface
+c = 299792458; % [m/s] Speed of light
+P = Fe/c; % Average pressure due to radiation
+rho_s_body = 0.5;
+rho_d_body = 0.1*2/3;
+rho_s_sp = 0.1;
+rho_d_sp = 0.1*2/3;
 
+% Air Drag
+rho_air = 6.967e-13;
+Cd = 2.2;
 
 stopTime = T;
 
