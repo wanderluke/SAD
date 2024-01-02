@@ -71,14 +71,10 @@ invI_tot = inv(I_tot);
 
 %%%%%%%%%%%%%%%%%%%%%%% Sensors characteristics %%%%%%%%%%%%%%%%%%%%%%%
 
-% Earth Horizon Sensor STD16
-EHSampleRate = 1;  % Earth Horizon sensor sample rate  [Hz]  
-EHAccuracy = 0.1020;  % Earth Horizon sensor accuracy HSNS  [deg]
-
-% Gyroscope STIM300
-GyroSampleRate = 10;  % Gyroscope sample rate  [Hz] 
-ARW = 0.15;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
-RRW = 0.3;  % Rate Randon Walk gyroscope  [deg/h]
+% Gyroscope STIM380H
+GyroSampleRate = 262;  % Gyroscope sample rate  [Hz] 
+ARW = 0.10;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
+RRW = 0.5;  % Rate Randon Walk gyroscope  [deg/h]
 
 % Magnetometer DTFM100S
 MMAccuracy = 0.003;  % +-0.3%
