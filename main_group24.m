@@ -72,7 +72,7 @@ invI_tot = inv(I_tot);
 %%%%%%%%%%%%%%%%%%%%%%% Sensors characteristics %%%%%%%%%%%%%%%%%%%%%%%
 
 % Gyroscope STIM380H
-GyroSampleRate = 262;  % Gyroscope sample rate  [Hz] 
+GyroSampleRate = 10;  % Gyroscope sample rate  [Hz] 
 ARW = 0.10;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
 RRW = 0.5;  % Rate Randon Walk gyroscope  [deg/h]
 
