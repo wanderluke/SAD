@@ -102,7 +102,7 @@ q0 = [0 0 0 1]'; % quaternions initial condition
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Environment %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Magnetic Dsiturbance
+% Magnetic Disturbance
 % Roba necessaria per il Subsystem "Mag field senza Matlab fcn"
 % n_E = 729.2e-07; % [rad/s]
 % g1_0 = -29404.8 *1e-9;
