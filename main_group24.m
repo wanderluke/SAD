@@ -134,9 +134,12 @@ ARW = 0.10;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
 RRW = 0.5;  % Rate Randon Walk gyroscope  [deg/h]
 
 % Magnetometer DTFM100S
-MMAccuracy = 0.003;  % +-0.3%
+AccMagn = 0.5; 
 MMSampleRate = 1;  % Magnetometer sample rate  [Hz] to speed up the simulation
 MMnoise = 15e-9*[1; 1; 1];  % noise vector (bias)  [T]
+
+% Sun Sensor
+AccSunSens = 0.125;
 
 % Extended State Observer
 Lw = 0.8;
@@ -149,8 +152,6 @@ wx0 = deg2rad(3);  %omega x  [rad/s]
 wy0 = deg2rad(11);  %omega y  [rad/s]                          
 wz0 = deg2rad(14);  %omega z  [rad/s]                        
 w0 = [wx0; wy0; wz0];  %omega vector  [rad/s] [3x1] 
-A_BN0 = eye(3);
-A0 = eye(3);
 q0 = [0 0 0 1]'; % quaternions initial condition
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Environment %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,7 +180,7 @@ Fe = 1358; % [W/m^2] Power per unit surface
 c = 299792458; % [m/s] Speed of light
 P = Fe/c; % Average pressure due to radiation
 rho_s_body = 0.5;
-rho_d_body = 0.1*2/3;
+rho_d_body = 0.1*2/3; % Aggiungi commento
 rho_s_sp = 0.1;
 rho_d_sp = 0.1*2/3;
 
