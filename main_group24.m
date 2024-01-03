@@ -157,11 +157,11 @@ q0 = [0 0 0 1]'; % quaternions initial condition
 
 % Magnetic Disturbance
 % Roba necessaria per il Subsystem "Mag field senza Matlab fcn"
-% n_E = 729.2e-07; % [rad/s]
-% g1_0 = -29404.8 *1e-9;
-% g1_1 = -1450.9 *1e-9;
-% h1_1 = 4652.5 *1e-9;
-% H_0 = ((g1_0^2)+(g1_1^2)+(h1_1^2))^0.5;
+n_E = 729.2e-07; % [rad/s]
+g1_0 = -29404.8 *1e-9;
+g1_1 = -1450.9 *1e-9;
+h1_1 = 4652.5 *1e-9;
+H_0 = ((g1_0^2)+(g1_1^2)+(h1_1^2))^0.5;
 
 m = [0.1; 0.1; 0.1]; % [A*m^2] Residual  magnetic  induction  due  to  currents  in  the  satellite
 [gn, gm, gvali, gsvi] = textread('igrfSg.txt','%f %f %f %f');
@@ -184,8 +184,9 @@ rho_s_sp = 0.1;
 rho_d_sp = 0.1*2/3;
 
 % Air Drag
-rho_air = 6.967e-13;
+rho_air = 6.967e-13; % [kg/m^3]
 Cd = 2.2;
+om_E = 0.000072921; % [rad/s]
 
 stopTime = T;
 
