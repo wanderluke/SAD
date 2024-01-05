@@ -195,18 +195,84 @@ stopTime = T;
 
 
 %% Variable Thrusters
-bz = 0.1;                                                                   % braccio forze lungo asse z [m]
-by = 0.1;                                                                   % braccio forze lungo asse y [m]
+bz = 0.15;                                                                   % braccio forze lungo asse z [m]
+by = 0.05;                                                                   % braccio forze lungo asse y [m]
 
 thrust.R = [bz -bz 0   0   0   0                                            % R matrix [3x6]
              0  0  bz -bz  0   0
              0  0  0   0  by -by];
 thrust.R_pinv = pinv(thrust.R);                                             % pseudo invers R matrix
-thrust.T_min = 10e-6;                                                     % minimum Thrust [N]
-thrust.T_max = 500e-6;                                                    % maximum Thrust [N]
-thrust.w = sum(null(thrust.R,'r'),2);                                       % non lo so 
+thrust.T_min = 10e-6;                                                       % minimum Thrust [N]
+thrust.T_max = 0.35e-2;                                                      % maximum Thrust [N]
+thrust.w = sum(null(thrust.R,'rational'),2);                                       % null space vector
+thrust.Gain=0.01;
+thrust.Filter_band=1e-3;
 
 %% Pointing control
 
 k1 = 5e-2;
 k2 = 2.5e-2;
+
+
+
+%% PLOTs
+close all, clc
+outDetumbling = sim('detumbling_group24.slx');
+
+set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
+set(0,'defaultAxesTickLabelInterpreter','latex');
+set(0, 'defaultLegendInterpreter','latex');
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(outDetumbling.M_GG, 'linewidth',1.5);
+plot(outDetumbling.M_SRP, 'linewidth',1.5);
+plot(outDetumbling.M_MAG, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('Gravity Gradient','SRP','Magnetique Torque')
+xlim([0, outDetumbling.tout(end)])
+% saveFigAsPdf('uncont_omega',0.5,2)
+
+
+figure('Name','Total Disturbances Torque'),
+hold on, grid on, box on
+plot(outDetumbling.disturbances, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$Td_x$','$Td_y$','$Td_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Angular Velocity $\omega$'),
+hold on, grid on, box on
+plot(outDetumbling.w, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [rad/s]')
+legend('$\omega_x$','$\omega_y$','$\omega_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Angular Velocity $\omega$ (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.w, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [rad/s]')
+yline(1e-3,'k--'), yline(-1e-3,'k--')
+legend('$\omega_x$','$\omega_y$','$\omega_z$','','')
+xlim([0, outDetumbling.tout(end)])
+ylim([-1e-2 1e-2])
+
+
+figure('Name','Ideal Control Torque'),
+hold on, grid on, box on
+plot(outDetumbling.MC_ideal, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$MC_x$','$MC_y$','$MC_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Ideal Control Torque (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.MC_ideal, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$MC_x$','$MC_y$','$MC_z$')
+xlim([1000, outDetumbling.tout(end)])
+
+
