@@ -49,10 +49,10 @@ c = 2.99792*10^8;  % Light velocity  [m/s]
 %%%%%%%%%%%%%%%%%%%%%%%%%% Orbit Initial Data %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 R_e = 6378;  % Earth's radius  [km]
-a = 6939.063;  % Semi-major axis  [km]             
+a = 6978;  % Semi-major axis  [km]             
 e = 0;  % Eccentricity  [-]             
-i = deg2rad(97.5307);  % Inclination  [rad]           
-theta0 = deg2rad(30);  % true anomaly initial condition  [rad] 
+i = deg2rad(98);  % Inclination  [rad]           
+theta0 = deg2rad(0);  % true anomaly initial condition  [rad] 
 n = sqrt(mu/a^3);  % mean angular velocity  [rad/s]         
 T = 2*pi/n;  % orbit period  [s]   
 
@@ -129,7 +129,7 @@ pan.r = [0; 0; 4/5*z/2];
 %%%%%%%%%%%%%%%%%%%%%%% Sensors characteristics %%%%%%%%%%%%%%%%%%%%%%%
 
 % Gyroscope STIM380H
-GyroSampleRate = 20;  % Gyroscope sample rate  [Hz] 
+GyroSampleRate = 10;  % Gyroscope sample rate  [Hz] 
 ARW = deg2rad(0.10);  % Angular Randon Walk gyroscope  [rad/s]
 sigma_ARW = ARW/sqrt(3600);
 sigma_n = sigma_ARW/sqrt(1/GyroSampleRate);
