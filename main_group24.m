@@ -176,11 +176,6 @@ G = [gn, gm, gvali, gsvi];
 H = [hn, hm, hvali, hsvi];
 
 % Solar Radiation Pressure
-rho_d_MB = 0.1;
-rho_s_MB = 0.5;
-rho_s_SP = 0.1;
-rho_d_SP = 0.1;
-% Dati per il SRP di Luke
 Fe = 1358; % [W/m^2] Power per unit surface
 c = 299792458; % [m/s] Speed of light
 P = Fe/c; % Average pressure due to radiation
