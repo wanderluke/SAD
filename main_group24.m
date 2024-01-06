@@ -146,11 +146,6 @@ MMnoise = 15e-9*[1; 1; 1];  % noise vector (bias)  [T]
 % Sun Sensor
 AccSunSens = 0.125;
 
-% Extended State Observer
-Lw = 0.8;
-Ld = 1e-5;
-
-
 %%%%%%%%%%%%%%%%%%%%%% Initial Conditions %%%%%%%%%%%%%%%%%%%%%%
 
 wx0 = deg2rad(3);  %omega x  [rad/s]        
@@ -190,8 +185,6 @@ Cd = 2.2;
 om_E = 0.000072921; % [rad/s]
 
 stopTime = T;
-
-
 
 
 %% Variable Thrusters
