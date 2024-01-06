@@ -210,3 +210,37 @@ thrust.w = sum(null(thrust.R,'r'),2);                                       % no
 
 k1 = 5e-2;
 k2 = 2.5e-2;
+
+%% Pointing plots
+
+% Setup for the plots:
+set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
+set(0,'defaultAxesTickLabelInterpreter','latex');
+set(0, 'defaultLegendInterpreter','latex');
+
+Pointing = sim("pointing_group24.slx");
+
+figure('Name','Earth Pointing - Pointing Error'),
+hold on, grid on, box on
+plot(Pointing.point_err, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('Error [deg]')
+
+figure('Name','Tracking - Angular Velocity'),
+hold on, grid on, box on
+plot(Pointing.omega, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('$\omega$ [rad/s]')
+legend('$\omega_x$','$\omega_y$','$\omega_z$')
+
+figure('Name','Tracking - Mc'),
+hold on, grid on, box on
+plot(Pointing.Mc, 'linewidth',1.5);
+legend('$M_{c,x}$',...
+    '$M_{c,y}$',...
+    '$M_{c,z}$')
+xlabel('t $[s]$'), ylabel('$[N m]$')
+
+figure('Name','Tracking - Thrust level'),
+hold on, grid on, box on
+plot(Pointing.th_level, 'linewidth',1.5);
+legend('$th_{level}$')
+xlabel('t $[s]$'), ylabel('$[%]$')
