@@ -34,8 +34,6 @@ clc
 
 
 addpath('.\data')
-%addpath('.\scripts\')
-%addpath('functions\')
 
 % DATA
 
@@ -47,20 +45,28 @@ c = 2.99792*10^8;  % Light velocity  [m/s]
 %%%%%%%%%%%%%%%%%%%%%%%%%% Orbit Initial Data %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 R_e = 6378;  % Earth's radius  [km]
-a = 6978;  % Semi-major axis  [km]             
+a = 7132;  % Semi-major axis  [km]             
 e = 0;  % Eccentricity  [-]             
-i = deg2rad(98);  % Inclination  [rad]           
+i = deg2rad(98.46);  % Inclination  [rad]           
 theta0 = deg2rad(0);  % true anomaly initial condition  [rad] 
 n = sqrt(mu/a^3);  % mean angular velocity  [rad/s]         
 T = 2*pi/n;  % orbit period  [s]   
 
 %%%%%%%%%%%%%%%%%%%%%% Spacecraft Characteristics %%%%%%%%%%%%%%%%%%%%%%
 
-MB = [4; 0.1; 0.1; 0.3];% Main body  [kg; m; m; m] Mass, a, b, h
-SP = [0.25; 0.1; 0.3; 0.01];% Solar panels  [kg; m; m; m] Mass, a, b, h  
-
+% Main body
 x = 0.1; y = 0.1; z = 0.3; % Main body size [m]
 mass = 4; % Main body mass  [kg]
+
+% Define solar panel type A and B
+x_spA = 0.3; x_spB = 0.1; % [m]
+y_spA = 0.1; y_spB = 0.3; % [m]
+z_sp = 0.002; % [m]
+mass_sp = 0.25; % [kg]
+
+MB = [mass; x; y; z]; % Main body  [kg; m; m; m] Mass, a, b, h
+SP = [mass_sp; x_spB; y_spB; z_sp]; % Solar panels  [kg; m; m; m] Mass, a, b, h  
+
 % Inertia matrix main body 
 Ix_mb = mass / 12*((y^2+z^2)); % [kg*m^2]
 Iy_mb = mass / 12*((x^2+z^2));
@@ -69,11 +75,7 @@ Iz_mb = mass / 12*((y^2+x^2));
 Ix_hs_mb = Ix_mb + mass * ((z/2)/5)^2;
 Iy_hs_mb = Iy_mb + mass * ((z/2)/5)^2;
 Iz_hs_mb = Iz_mb;
-% Define solar panel type A and B
-x_spA = 0.3; x_spB = 0.1; % [m]
-y_spA = 0.1; y_spB = 0.3; % [m]
-z_sp = 0.002; % [m]
-mass_sp = 0.25; % [kg]
+
 % Inertia matrix panel A in panel frame
 Ix_spA = mass_sp / 12*((y_spA^2+z_sp^2));
 Iy_spA = mass_sp / 12*((x_spA^2+z_sp^2));
@@ -92,6 +94,7 @@ Iz_spB = mass_sp / 12*((y_spB^2+x_spB^2));
 Ix_hsB = Ix_spB + mass_sp * ((z_cg)^2+(x/2+z/2)^2);
 Iy_hsB = Iy_spB + mass_sp * (z_cg)^2;
 Iz_hsB = Iz_spB + mass_sp * (x/2+z/2)^2;
+
 % Total inertia in body frame 
 Ix = Ix_hs_mb + 2*Ix_hsA + 2*Ix_hsB; 
 Iy = Iy_hs_mb + 2*Iy_hsA + 2*Iy_hsB;
@@ -99,7 +102,8 @@ Iz = Iz_hs_mb + 2*Iz_hsA + 2*Iz_hsB;
 I_tot = [Ix 0 0; 0 Iy 0; 0 0 Iz];
 invI_tot = inv(I_tot);   
 
-%%%%%%%%%%%%%%%%%%%%%%% Surface of the main body %%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%% Geometrical characteristics %%%%%%%%%%%%%%%%%%%%%%% 
+
 s1.n = [1; 0; 0];
 s1.A = z*y;
 s1.r = [x/2; 0; 0];
@@ -131,7 +135,7 @@ GyroSampleRate = 10;  % Gyroscope sample rate  [Hz]
 ARW = deg2rad(0.10);  % Angular Randon Walk gyroscope  [rad/s]
 sigma_ARW = ARW/sqrt(3600);
 sigma_n = sigma_ARW/sqrt(1/GyroSampleRate);
-RRW = deg2rad(0.3);  % Rate Randon Walk gyroscope  [rad/s]
+RRW = deg2rad(0.0003);  % Rate Randon Walk gyroscope  [rad/s]
 sigma_RRW = RRW/sqrt(3600);
 sigma_b = sigma_RRW/sqrt(1/GyroSampleRate);
 b0 = deg2rad(0.3)/sqrt(3600)*ones(3,1);
@@ -143,6 +147,7 @@ MMnoise = 15e-9*[1; 1; 1];  % noise vector (bias)  [T]
 
 % Sun Sensor
 AccSunSens = 0.125;
+SunSampleRate = 10; % Sun sensor sample rate [Hz]
 
 %%%%%%%%%%%%%%%%%%%%%% Initial Conditions %%%%%%%%%%%%%%%%%%%%%%
 
@@ -155,7 +160,6 @@ q0 = [0 0 0 1]'; % quaternions initial condition
 %%%%%%%%%%%%%%%%%%%%%%%%%% Environment %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Magnetic Disturbance
-% Roba necessaria per il Subsystem "Mag field senza Matlab fcn"
 n_E = 729.2e-07; % [rad/s]
 g1_0 = -29404.8 *1e-9;
 g1_1 = -1450.9 *1e-9;
@@ -171,9 +175,9 @@ H = [hn, hm, hvali, hsvi];
 % Solar Radiation Pressure
 Fe = 1358; % [W/m^2] Power per unit surface
 c = 299792458; % [m/s] Speed of light
-P = Fe/c; % Average pressure due to radiation
+P = Fe/c; % [P] Average pressure due to radiation
 rho_s_body = 0.5;
-rho_d_body = 0.1*2/3; % Aggiungi commento
+rho_d_body = 0.1*2/3;
 rho_s_sp = 0.1;
 rho_d_sp = 0.1*2/3;
 
@@ -210,10 +214,56 @@ set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
 set(0,'defaultAxesTickLabelInterpreter','latex');
 set(0, 'defaultLegendInterpreter','latex');
 
-%% PLOTs
-clc , close all
-outDetumbling = sim('detumbling_group24.slx');
+%% Uncontrolled plots
 
+Uncontrolled = sim("uncontrolled_group24.slx");
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(Uncontrolled.M_GG_abs, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('Gravity Gradient')
+xlim([0, Uncontrolled.tout(end)])
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(Uncontrolled.M_SRP_abs, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('SRP')
+xlim([0, Uncontrolled.tout(end)])
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(Uncontrolled.M_ERP_abs, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('ERP')
+xlim([0, Uncontrolled.tout(end)])
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(Uncontrolled.M_MAG_abs, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('Magnetique Torque')
+xlim([0, Uncontrolled.tout(end)])
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(Uncontrolled.M_air_abs, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('Air drag')
+xlim([0, Uncontrolled.tout(end)])
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(outDetumbling.M_EXT, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$M_x$','$M_y$','$M_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+%% Detumbling plots
+
+outDetumbling = sim('detumbling_group24.slx');
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
@@ -224,8 +274,6 @@ xlabel('$t [s]$'), ylabel(' [N m]')
 legend('Gravity Gradient','SRP','Magnetique Torque')
 xlim([0, outDetumbling.tout(end)])
 
-
-
 figure('Name','Total Disturbances Torque'),
 hold on, grid on, box on
 plot(outDetumbling.disturbances, 'linewidth',1.5);
@@ -233,14 +281,12 @@ xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$Td_x$','$Td_y$','$Td_z$')
 xlim([0, outDetumbling.tout(end)])
 
-
 figure('Name','Angular Velocity $\omega$'),
 hold on, grid on, box on
 plot(outDetumbling.w, 'linewidth',1.5);
 xlabel('$t [s]$'), ylabel(' [rad/s]')
 legend('$\omega_x$','$\omega_y$','$\omega_z$')
 xlim([0, outDetumbling.tout(end)])
-
 
 figure('Name','Angular Velocity $\omega$ (detail)'),
 hold on, grid on, box on
@@ -251,14 +297,12 @@ legend('$\omega_x$','$\omega_y$','$\omega_z$','','')
 xlim([0, outDetumbling.tout(end)])
 ylim([-1e-2 1e-2])
 
-
 figure('Name','Ideal Control Torque'),
 hold on, grid on, box on
 plot(outDetumbling.MC_ideal, 'linewidth',1.5);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$MC_x$','$MC_y$','$MC_z$')
 xlim([0, outDetumbling.tout(end)])
-
 
 figure('Name','Ideal Control Torque (detail)'),
 hold on, grid on, box on
@@ -267,7 +311,6 @@ xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$MC_x$','$MC_y$','$MC_z$')
 xlim([1000, outDetumbling.tout(end)])
 
-
 figure('Name','Thrust Level'),
 hold on, grid on, box on
 plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
@@ -275,14 +318,12 @@ xlabel('$t [s]$'), ylabel(' $[\%]$')
 legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
 xlim([0 outDetumbling.tout(end)])
 
-
 figure('Name','Thrust Level (detail)'),
 hold on, grid on, box on
 plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
 xlabel('$t [s]$'), ylabel(' $[\%]$')
 legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
 xlim([0 300])
-
 
 %% Pointing plots
 
