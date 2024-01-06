@@ -205,7 +205,6 @@ thrust.Filter_band=1e-3;                                                    % pr
 k1 = 5e-2;
 k2 = 2.5e-2;
 
-
 %% PLOTs
 clc , close all
 outDetumbling = sim('detumbling_group24.slx');
