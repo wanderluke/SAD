@@ -202,16 +202,18 @@ thrust.Filter_band=1e-3;                                                    % pr
 
 % Pointing control
 
-k1 = 5e-2;
-k2 = 2.5e-2;
+k1 = 0.8;
+k2 = 9e-2;
+
+% Plot settings
+set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
+set(0,'defaultAxesTickLabelInterpreter','latex');
+set(0, 'defaultLegendInterpreter','latex');
 
 %% PLOTs
 clc , close all
 outDetumbling = sim('detumbling_group24.slx');
 
-set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
-set(0,'defaultAxesTickLabelInterpreter','latex');
-set(0, 'defaultLegendInterpreter','latex');
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
@@ -290,12 +292,27 @@ figure('Name','Earth Pointing - Pointing Error'),
 hold on, grid on, box on
 plot(Pointing.point_err, 'linewidth',1.5);
 xlabel('$t [s]$'), ylabel('Error [deg]')
+xlim([0, Pointing.tout(end)])
+
+figure('Name','Earth Pointing - Pointing Error (detail)'),
+hold on, grid on, box on
+plot(Pointing.point_err, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('Error [deg]')
+xlim([1000, Pointing.tout(end)])
 
 figure('Name','Tracking - Angular Velocity'),
 hold on, grid on, box on
 plot(Pointing.omega, 'linewidth',1.5);
 xlabel('$t [s]$'), ylabel('$\omega$ [rad/s]')
 legend('$\omega_x$','$\omega_y$','$\omega_z$')
+xlim([0, Pointing.tout(end)])
+
+figure('Name','Tracking - Angular Velocity'),
+hold on, grid on, box on
+plot(Pointing.omega, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('$\omega$ [rad/s]')
+legend('$\omega_x$','$\omega_y$','$\omega_z$')
+xlim([1000, Pointing.tout(end)])
 
 figure('Name','Tracking - Mc'),
 hold on, grid on, box on
@@ -304,9 +321,11 @@ legend('$M_{c,x}$',...
     '$M_{c,y}$',...
     '$M_{c,z}$')
 xlabel('t $[s]$'), ylabel('$[N m]$')
+xlim([0, Pointing.tout(end)])
 
 figure('Name','Tracking - Thrust level'),
 hold on, grid on, box on
-plot(Pointing.th_level, 'linewidth',1.5);
-legend('$th_{level}$')
-xlabel('t $[s]$'), ylabel('$[%]$')
+plot(Pointing.Thrust_Level, 'linewidth',1.5);
+legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
+xlabel('$t [s]$'), ylabel(' $[\%]$')
+xlim([0, Pointing.tout(end)])
