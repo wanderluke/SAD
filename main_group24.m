@@ -204,12 +204,86 @@ thrust.w = sum(null(thrust.R,'r'),2);                                       % no
 k1 = 5e-2;
 k2 = 2.5e-2;
 
-%% Pointing plots
+%% Detumbling plots
 
-% Setup for the plots:
+%% PLOTs
+clc , close all
+outDetumbling = sim('detumbling_group24.slx');
+
 set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
 set(0,'defaultAxesTickLabelInterpreter','latex');
 set(0, 'defaultLegendInterpreter','latex');
+
+figure('Name','Disturbances'),
+hold on, grid on, box on
+plot(outDetumbling.M_GG, 'linewidth',1.5);
+plot(outDetumbling.M_SRP, 'linewidth',1.5);
+plot(outDetumbling.M_MAG, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('Gravity Gradient','SRP','Magnetique Torque')
+xlim([0, outDetumbling.tout(end)])
+% saveFigAsPdf('uncont_omega',0.5,2)
+
+
+figure('Name','Total Disturbances Torque'),
+hold on, grid on, box on
+plot(outDetumbling.disturbances, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$Td_x$','$Td_y$','$Td_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Angular Velocity $\omega$'),
+hold on, grid on, box on
+plot(outDetumbling.w, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [rad/s]')
+legend('$\omega_x$','$\omega_y$','$\omega_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Angular Velocity $\omega$ (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.w, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [rad/s]')
+yline(1e-3,'k--'), yline(-1e-3,'k--')
+legend('$\omega_x$','$\omega_y$','$\omega_z$','','')
+xlim([0, outDetumbling.tout(end)])
+ylim([-1e-2 1e-2])
+
+
+figure('Name','Ideal Control Torque'),
+hold on, grid on, box on
+plot(outDetumbling.MC_ideal, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$MC_x$','$MC_y$','$MC_z$')
+xlim([0, outDetumbling.tout(end)])
+
+
+figure('Name','Ideal Control Torque (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.MC_ideal, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' [N m]')
+legend('$MC_x$','$MC_y$','$MC_z$')
+xlim([1000, outDetumbling.tout(end)])
+
+
+figure('Name','Thrust Level'),
+hold on, grid on, box on
+plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' $[\%]$')
+legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
+xlim([0 outDetumbling.tout(end)])
+
+
+figure('Name','Thrust Level (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' $[\%]$')
+legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
+xlim([0 300])
+
+
+%% Pointing plots
 
 Pointing = sim("pointing_group24.slx");
 
