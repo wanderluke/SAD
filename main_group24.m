@@ -220,45 +220,45 @@ Uncontrolled = sim("uncontrolled_group24.slx");
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(Uncontrolled.M_GG_abs, 'linewidth',1.5);
+plot(Uncontrolled.M_GG_abs, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('Gravity Gradient')
 xlim([0, Uncontrolled.tout(end)])
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(Uncontrolled.M_SRP_abs, 'linewidth',1.5);
+plot(Uncontrolled.M_SRP_abs, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('SRP')
 xlim([0, Uncontrolled.tout(end)])
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(Uncontrolled.M_ERP_abs, 'linewidth',1.5);
+plot(Uncontrolled.M_ERP_abs, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('ERP')
 xlim([0, Uncontrolled.tout(end)])
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(Uncontrolled.M_MAG_abs, 'linewidth',1.5);
+plot(Uncontrolled.M_MAG_abs, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('Magnetique Torque')
 xlim([0, Uncontrolled.tout(end)])
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(Uncontrolled.M_air_abs, 'linewidth',1.5);
+plot(Uncontrolled.M_air_abs, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('Air drag')
 xlim([0, Uncontrolled.tout(end)])
 
 figure('Name','Disturbances'),
 hold on, grid on, box on
-plot(outDetumbling.M_EXT, 'linewidth',1.5);
+plot(Uncontrolled.M_EXT, 'linewidth',1);
 xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$M_x$','$M_y$','$M_z$')
-xlim([0, outDetumbling.tout(end)])
+xlim([0, Uncontrolled.tout(end)])
 
 
 %% Detumbling plots
