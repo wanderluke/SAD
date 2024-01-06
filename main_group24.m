@@ -37,8 +37,6 @@ addpath('.\data')
 %addpath('.\scripts\')
 %addpath('functions\')
 
-stepsize = 0.1; % set lower value for a more refined smulation
-
 % DATA
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Constants %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,8 +185,9 @@ om_E = 0.000072921; % [rad/s]
 stopTime = T;
 
 
-%% Variable Thrusters
-bz = z-(mass*z/2)/(mass+mass_sp);                                           % Force's arm along z-axis [m]
+% Variable Thrusters
+
+bz = z-(mass*z/2)/(mass+mass_sp*4);                                         % Force's arm along z-axis [m]
 by = y/2;                                                                   % Force's arm along y-axis [m]
 
 thrust.R = [bz -bz 0   0   0   0                                            % R matrix [3x6]
@@ -198,9 +197,10 @@ thrust.R_pinv = pinv(thrust.R);                                             % ps
 thrust.T_min = 10e-6;                                                       % minimum Thrust [N]
 thrust.T_max = 0.35e-2;                                                     % maximum Thrust [N]
 thrust.w = sum(null(thrust.R,'rational'),2);                                % null space vector
-thrust.Gain=0.01;                                                            % controller gain
+thrust.Gain=0.01;                                                           % controller gain
 thrust.Filter_band=1e-3;                                                    % pre-filter omega band  
-%% Pointing control
+
+% Pointing control
 
 k1 = 5e-2;
 k2 = 2.5e-2;
