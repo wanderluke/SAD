@@ -195,18 +195,18 @@ stopTime = T;
 
 
 %% Variable Thrusters
-bz = 0.15;                                                                   % braccio forze lungo asse z [m]
-by = 0.05;                                                                   % braccio forze lungo asse y [m]
+bz = z-(mass*z/2)/(mass+mass_sp);                                           % Force's arm along z-axis [m]
+by = y/2;                                                                   % Force's arm along y-axis [m]
 
 thrust.R = [bz -bz 0   0   0   0                                            % R matrix [3x6]
              0  0  bz -bz  0   0
              0  0  0   0  by -by];
 thrust.R_pinv = pinv(thrust.R);                                             % pseudo invers R matrix
 thrust.T_min = 10e-6;                                                       % minimum Thrust [N]
-thrust.T_max = 0.35e-2;                                                      % maximum Thrust [N]
-thrust.w = sum(null(thrust.R,'rational'),2);                                       % null space vector
-thrust.Gain=0.01;
-thrust.Filter_band=1e-3;
+thrust.T_max = 0.35e-2;                                                     % maximum Thrust [N]
+thrust.w = sum(null(thrust.R,'rational'),2);                                % null space vector
+thrust.Gain=0.01;                                                            % controller gain
+thrust.Filter_band=1e-3;                                                    % pre-filter omega band            
 
 %% Pointing control
 
@@ -216,7 +216,7 @@ k2 = 2.5e-2;
 
 
 %% PLOTs
-close all, clc
+clc , close all
 outDetumbling = sim('detumbling_group24.slx');
 
 set(0,'defaultTextInterpreter','latex','defaultAxesFontSize',15);
@@ -275,4 +275,19 @@ xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$MC_x$','$MC_y$','$MC_z$')
 xlim([1000, outDetumbling.tout(end)])
 
+%%
+figure('Name','Thrust Level'),
+hold on, grid on, box on
+plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' $[\%]$')
+legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
+xlim([0 outDetumbling.tout(end)])
+
+
+figure('Name','Thrust Level (detail)'),
+hold on, grid on, box on
+plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel(' $[\%]$')
+legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
+xlim([0 300])
 
