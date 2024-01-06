@@ -49,10 +49,10 @@ c = 2.99792*10^8;  % Light velocity  [m/s]
 %%%%%%%%%%%%%%%%%%%%%%%%%% Orbit Initial Data %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 R_e = 6378;  % Earth's radius  [km]
-a = 6939.063;  % Semi-major axis  [km]             
+a = 6978;  % Semi-major axis  [km]             
 e = 0;  % Eccentricity  [-]             
-i = deg2rad(97.5307);  % Inclination  [rad]           
-theta0 = deg2rad(30);  % true anomaly initial condition  [rad] 
+i = deg2rad(98);  % Inclination  [rad]           
+theta0 = deg2rad(0);  % true anomaly initial condition  [rad] 
 n = sqrt(mu/a^3);  % mean angular velocity  [rad/s]         
 T = 2*pi/n;  % orbit period  [s]   
 
@@ -130,8 +130,13 @@ pan.r = [0; 0; 4/5*z/2];
 
 % Gyroscope STIM380H
 GyroSampleRate = 10;  % Gyroscope sample rate  [Hz] 
-ARW = 0.10;  % Angular Randon Walk gyroscope  [deg/sqrt(h)]
-RRW = 0.5;  % Rate Randon Walk gyroscope  [deg/h]
+ARW = deg2rad(0.10);  % Angular Randon Walk gyroscope  [rad/s]
+sigma_ARW = ARW/sqrt(3600);
+sigma_n = sigma_ARW/sqrt(1/GyroSampleRate);
+RRW = deg2rad(0.3);  % Rate Randon Walk gyroscope  [rad/s]
+sigma_RRW = RRW/sqrt(3600);
+sigma_b = sigma_RRW/sqrt(1/GyroSampleRate);
+b0 = deg2rad(0.3)/sqrt(3600)*ones(3,1);
 
 % Magnetometer DTFM100S
 AccMagn = 0.5; 
@@ -140,11 +145,6 @@ MMnoise = 15e-9*[1; 1; 1];  % noise vector (bias)  [T]
 
 % Sun Sensor
 AccSunSens = 0.125;
-
-% Extended State Observer
-Lw = 0.8;
-Ld = 1e-5;
-
 
 %%%%%%%%%%%%%%%%%%%%%% Initial Conditions %%%%%%%%%%%%%%%%%%%%%%
 
@@ -171,11 +171,6 @@ G = [gn, gm, gvali, gsvi];
 H = [hn, hm, hvali, hsvi];
 
 % Solar Radiation Pressure
-rho_d_MB = 0.1;
-rho_s_MB = 0.5;
-rho_s_SP = 0.1;
-rho_d_SP = 0.1;
-% Dati per il SRP di Luke
 Fe = 1358; % [W/m^2] Power per unit surface
 c = 299792458; % [m/s] Speed of light
 P = Fe/c; % Average pressure due to radiation
@@ -192,28 +187,24 @@ om_E = 0.000072921; % [rad/s]
 stopTime = T;
 
 
-
-
 %% Variable Thrusters
-bz = z-(mass*z/2)/(mass+mass_sp);                                           % Force's arm along z-axis [m]
-by = y/2;                                                                   % Force's arm along y-axis [m]
+bz = 0.1;                                                                   % braccio forze lungo asse z [m]
+by = 0.1;                                                                   % braccio forze lungo asse y [m]
 
 thrust.R = [bz -bz 0   0   0   0                                            % R matrix [3x6]
              0  0  bz -bz  0   0
              0  0  0   0  by -by];
 thrust.R_pinv = pinv(thrust.R);                                             % pseudo invers R matrix
-thrust.T_min = 10e-6;                                                       % minimum Thrust [N]
-thrust.T_max = 0.35e-2;                                                     % maximum Thrust [N]
-thrust.w = sum(null(thrust.R,'rational'),2);                                % null space vector
-thrust.Gain=0.01;                                                            % controller gain
-thrust.Filter_band=1e-3;                                                    % pre-filter omega band            
+thrust.T_min = 10e-6;                                                     % minimum Thrust [N]
+thrust.T_max = 500e-6;                                                    % maximum Thrust [N]
+thrust.w = sum(null(thrust.R,'r'),2);                                       % non lo so 
 
 %% Pointing control
 
 k1 = 5e-2;
 k2 = 2.5e-2;
 
-
+%% Detumbling plots
 
 %% PLOTs
 clc , close all
@@ -275,7 +266,7 @@ xlabel('$t [s]$'), ylabel(' [N m]')
 legend('$MC_x$','$MC_y$','$MC_z$')
 xlim([1000, outDetumbling.tout(end)])
 
-%%
+
 figure('Name','Thrust Level'),
 hold on, grid on, box on
 plot(outDetumbling.Thrust_Level, 'linewidth',1.5);
@@ -291,3 +282,32 @@ xlabel('$t [s]$'), ylabel(' $[\%]$')
 legend('$F_1$','$F_2$','$F_3$','$F_4$','$F_5$','$F_6$')
 xlim([0 300])
 
+
+%% Pointing plots
+
+Pointing = sim("pointing_group24.slx");
+
+figure('Name','Earth Pointing - Pointing Error'),
+hold on, grid on, box on
+plot(Pointing.point_err, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('Error [deg]')
+
+figure('Name','Tracking - Angular Velocity'),
+hold on, grid on, box on
+plot(Pointing.omega, 'linewidth',1.5);
+xlabel('$t [s]$'), ylabel('$\omega$ [rad/s]')
+legend('$\omega_x$','$\omega_y$','$\omega_z$')
+
+figure('Name','Tracking - Mc'),
+hold on, grid on, box on
+plot(Pointing.Mc, 'linewidth',1.5);
+legend('$M_{c,x}$',...
+    '$M_{c,y}$',...
+    '$M_{c,z}$')
+xlabel('t $[s]$'), ylabel('$[N m]$')
+
+figure('Name','Tracking - Thrust level'),
+hold on, grid on, box on
+plot(Pointing.th_level, 'linewidth',1.5);
+legend('$th_{level}$')
+xlabel('t $[s]$'), ylabel('$[%]$')
